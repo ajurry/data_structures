@@ -1,1 +1,17 @@
+# Files created by vscode that are unrequired
 .vscode
+
+# Exclude produced files
+*.o
+*.log
+
+# Exclude any output directories
+build*
+bin*
+CMakeFiles*
+
+# Exclude files create by cmake
+*.cmake
+Makefile
+CMakeCache.txt
+
