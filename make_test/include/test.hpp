@@ -5,5 +5,5 @@ class test_output_class
 {
     public:
         test_output_class() = default;
-        void output_text(std::string& out) const;
+        std::string concatenate_strings(std::string first, std::string second) const;
 };

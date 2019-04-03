@@ -2,7 +2,10 @@
 #include <iostream>
 #include <string>
 
-void test_output_class::output_text(std::string& out) const
+std::string test_output_class::concatenate_strings(
+    std::string first
+    , std::string second
+) const    
 {
-    std::cout << "Output: " << out << std::endl;
+    return first + second;
 }

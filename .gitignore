@@ -2,6 +2,7 @@
 .vscode
 
 # Exclude produced files
+*.a
 *.o
 *.log
 
@@ -15,3 +16,8 @@ CMakeFiles*
 Makefile
 CMakeCache.txt
 
+# Exlude GTest Files
+*.pc
+googletest-build*
+googletest-download*
+googletest-src*

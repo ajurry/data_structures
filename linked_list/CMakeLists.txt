@@ -1,8 +1,8 @@
 # Specify the minimum version
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.1)
 
 # Add C++ standard library
-set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD 17)
 
 # Project to create
 project(make_test)

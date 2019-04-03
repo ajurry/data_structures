@@ -2,19 +2,39 @@
 #include <vector>
 #include <algorithm>
 #include "../include/test.hpp"
+#include "gtest/gtest.h"
 
-int main(int argc, const char* argv[])
-{
-    std::vector<std::string> to_print;
+namespace {
+    class TEST_TESTING : public::testing::Test {
 
-    for (int i = 1; i < argc; ++i) 
-    {
-        to_print.push_back(argv[i]);
+        protected:
+        void SetUp() override {
+        }
+
+        test_output_class test_class;
+    };
+
+    TEST_F(TEST_TESTING, combine_strings) {
+        EXPECT_EQ(test_class.concatenate_strings(
+            std::string("one"), std::string("two")), std::string("onetwo")
+        );
     }
 
-    test_output_class output_class;
+    TEST_F(TEST_TESTING, combine_strings_first_empty) {
+        EXPECT_EQ(test_class.concatenate_strings(
+            std::string(""), std::string("two")), std::string("two")
+        );
+    }
 
-    std::for_each(to_print.begin()
-                    , to_print.end()
-                    , [&](std::string text){output_class.output_text(text);});
+    TEST_F(TEST_TESTING, combine_strings_second_empty) {
+        EXPECT_EQ(test_class.concatenate_strings(
+            std::string("one"), std::string("")), std::string("one")
+        );
+    }
+};
+
+int main(int argc, char* argv[])
+{
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
