@@ -14,10 +14,10 @@ namespace {
             node_c = new node<int>{nullptr, nullptr, 3};
 
             // Links nodes together
-            node_a->tail = node_b;
-            node_b->head = node_a;
-            node_b->tail = node_c;
-            node_c->head = node_b;
+            node_a->next = node_b;
+            node_b->prev = node_a;
+            node_b->next = node_c;
+            node_c->prev = node_b;
         }
 
         void TearDown() override {

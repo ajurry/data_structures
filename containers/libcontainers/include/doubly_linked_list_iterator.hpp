@@ -5,8 +5,8 @@ namespace libcontainers {
     template<typename T>
     struct node
     {
-        node* head;
-        node* tail;
+        node* prev;
+        node* next;
         T data;
     };
 
@@ -27,20 +27,20 @@ namespace libcontainers {
         doubly_linked_list_iterator(const doubly_linked_list_iterator<T>& iter) = default;
         doubly_linked_list_iterator<T>& operator=(const doubly_linked_list_iterator<T>& iter) = default;
 
-        // Pre increment operators
-        doubly_linked_list_iterator<T> operator++(){m_ptr = m_ptr->tail; return (*this);}
-        doubly_linked_list_iterator<T> operator--(){m_ptr = m_ptr->head; return (*this);}
+        // Pre operators
+        doubly_linked_list_iterator<T> operator++(){m_ptr = m_ptr->next; return (*this);}
+        doubly_linked_list_iterator<T> operator--(){m_ptr = m_ptr->prev; return (*this);}
 
-        // Post increment operators
-        doubly_linked_list_iterator<T> operator++(int){auto temp(*this); m_ptr = m_ptr->tail; return temp;}
-        doubly_linked_list_iterator<T> operator--(int){auto temp(*this); m_ptr = m_ptr->head; return temp;}
+        // Post operators
+        doubly_linked_list_iterator<T> operator++(int){auto temp(*this); m_ptr = m_ptr->next; return temp;}
+        doubly_linked_list_iterator<T> operator--(int){auto temp(*this); m_ptr = m_ptr->prev; return temp;}
 
         // Iterator comparisons
         bool operator==(const doubly_linked_list_iterator& iter) const
             {m_ptr == iter.getConstPtr();}
 
         bool operator!=(const doubly_linked_list_iterator& iter) const
-            {return !(this == iter);}
+            {return m_ptr != iter.getConstPtr();}
 
         // Access to underlying data/ptr
         T& operator*(){return m_ptr->data;}
