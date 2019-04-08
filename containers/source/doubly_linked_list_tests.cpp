@@ -10,19 +10,19 @@ namespace {
 
         protected:
         void SetUp() override {
-            test_list_int_with_entry = doubly_linked_list<int>(5);
         }
 
-        doubly_linked_list<int> test_list_int;
-        doubly_linked_list<int> test_list_int_with_entry;
-        doubly_linked_list<std::string> test_list_string;
+        void TearDown() override {
+        }
+
+        doubly_linked_list<int> test_list_int_with_entry = doubly_linked_list<int>(5);
     };
 
-    TEST_F(TEST_DOUBLY_LINKED_LIST, TEST) {
+    TEST_F(TEST_DOUBLY_LINKED_LIST, test_creation) {
+
         EXPECT_EQ(test_list_int_with_entry.empty(), false);
 
         test_list_int_with_entry.clear();
         EXPECT_EQ(test_list_int_with_entry.empty(), true);
-        std::cout<<"Actually finished tests"<<std::endl;
     }
 };

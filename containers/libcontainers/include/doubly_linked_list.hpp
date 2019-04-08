@@ -63,34 +63,34 @@ namespace libcontainers {
     template<typename T> doubly_linked_list<T>::doubly_linked_list()
         : head_node(nullptr)
     {
-        tail_node = new node<T>{head_node, nullptr};
+        head_node = tail_node = new node<T>{nullptr, nullptr};
     }
 
     template<typename T> doubly_linked_list<T>::doubly_linked_list(const T& data)
     {
-        head_node = new node<T>{nullptr, tail_node, data};
-        tail_node = new node<T>{head_node, nullptr};
+        head_node = new node<T>{nullptr, nullptr, data};
+        tail_node = new node<T>{head_node, nullptr, data};
         head_node->next = tail_node;
     }
 
     template<typename T> doubly_linked_list<T>::~doubly_linked_list()
     {
         clear();
+        delete (tail_node);
+        head_node = tail_node = nullptr;
     }
 
     template<typename T> void doubly_linked_list<T>::clear() {
         iterator iter = begin();
-        while(iter.getConstPtr()->next != nullptr) {
-            std::cout << *iter << std::endl;
-            // delete ((iter++).getPtr());
-            ++iter;
-            std::cout << *iter << std::endl;
-            std::cout << "ATTEMPTING TO DELETE" << std::endl;
+        while(iter != end()) {
+            iterator temp = iter++;
+            delete ((temp).getPtr());
         }
+        head_node = tail_node;
     }
 
     template<typename T> bool doubly_linked_list<T>::empty() {
-        return head_node == nullptr;
+        return head_node == tail_node;
     }
 
 };
