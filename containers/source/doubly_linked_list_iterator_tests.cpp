@@ -66,4 +66,11 @@ namespace {
         EXPECT_EQ(*iter_1, node_b->data);
         EXPECT_EQ(*iter_2, node_b->data);
     }
+
+    TEST_F(TEST_DOUBLY_LINKED_LIST_ITERATOR, test_equality){
+        doubly_linked_list_iterator<int> iter_1(node_a);
+        doubly_linked_list_iterator<int> iter_2(node_b);
+        EXPECT_NE(iter_1, iter_2);
+        EXPECT_EQ(++iter_1, iter_2);
+    }
 };

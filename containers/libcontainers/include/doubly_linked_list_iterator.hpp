@@ -5,8 +5,8 @@ namespace libcontainers {
     template<typename T>
     struct node
     {
-        node* prev;
-        node* next;
+        node<T>* next;
+        node<T>* prev;
         T data;
     };
 
@@ -37,10 +37,10 @@ namespace libcontainers {
 
         // Iterator comparisons
         bool operator==(const doubly_linked_list_iterator& iter) const
-            {m_ptr == iter.getConstPtr();}
+            {return m_ptr == iter.getConstPtr();}
 
         bool operator!=(const doubly_linked_list_iterator& iter) const
-            {return m_ptr != iter.getConstPtr();}
+            {return !(m_ptr == iter.getConstPtr());}
 
         // Access to underlying data/ptr
         T& operator*(){return m_ptr->data;}
