@@ -6,9 +6,9 @@ internet connection to get the most recent version of GTest from git
 ### What is this repository for? ###
 
 * This repository contains a library of fully tested container classes for C++
-* These containers attempt resemble the std::template library containers
+* Some containers attempt to resemble a STL interface
 * Included containers are;
-* Linked List (Singly and Doubly)
+* Linked List (Doubly)
 * Trees
 * Tries
 * Graphs
