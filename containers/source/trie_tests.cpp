@@ -2,7 +2,6 @@
 #include "trie.hpp"
 
 #include <string>
-#include <iostream>
 
 using namespace libcontainers;
 
