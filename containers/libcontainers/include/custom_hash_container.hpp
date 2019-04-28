@@ -3,6 +3,7 @@
 #include <string>
 
 struct custom_hash_container {
+    std::string stored_data;
     std::string string_info;
     int numeric_info;
 };

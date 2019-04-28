@@ -5,6 +5,10 @@
 
 using namespace libcontainers;
 
+struct bad_container_test {
+    std::string string_data;
+};
+
 class HASH_FUNCTION : public::testing::Test {
 };
 
@@ -34,9 +38,24 @@ TEST_F(HASH_FUNCTION, test_string) {
 
 TEST_F(HASH_FUNCTION, test_custom_data_structure) {
 
-    custom_hash_container custom_to_hash{"abcdefg", 100};
+    custom_hash_container custom_to_hash{"test_data", "abcdefg", 100};
     EXPECT_EQ(728, hash_function<custom_hash_container>{}(custom_to_hash));
 
-    custom_to_hash = {"abcdefghijk", 100};
+    custom_to_hash = {"test_data", "abcdefghijk", 100};
     EXPECT_EQ(915, hash_function<custom_hash_container>{}(custom_to_hash));
+}
+
+TEST_F(HASH_FUNCTION, test_unsupported_container) {
+
+    bool error_thrown = false;
+    bad_container_test bad_container{"test"};
+
+    try {
+        hash_function<bad_container_test>{}(bad_container);
+    }
+    catch (...) {
+        error_thrown = true;
+    }
+
+    EXPECT_EQ(true, error_thrown);
 }

@@ -1,10 +1,15 @@
 #pragma once
 #include <string>
+#include <exception>
 
 namespace libcontainers {
 
     template<typename T> struct hash_function
     {
+        size_t operator()(const T& data)
+        {
+            throw std::runtime_error("Please implement a valid hash function");
+        }
     };
 
     // Basic int hash function
