@@ -1,5 +1,5 @@
 #pragma once
-#include "hash.hpp"
+#include "hash_table.hpp"
 #include "hash_function.hpp"
 #include <list>
 
@@ -8,7 +8,7 @@ namespace libcontainers {
     {
         public:
         hash_chaining(size_t number_of_buckets = default_hash_table_size)
-            : hash_array(new std::list<T>[number_of_buckets])
+            : hash_array(new std::list<hash_node<T>>[number_of_buckets])
             , number_of_buckets(number_of_buckets)
         {
         }
@@ -23,7 +23,7 @@ namespace libcontainers {
         bool remove(const T& data) override {return false;}
 
         private:
-        std::list<T>* hash_array;
+        std::list<hash_node<T>>* hash_array;
         size_t number_of_buckets;
     };
 };
