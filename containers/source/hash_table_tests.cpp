@@ -10,37 +10,32 @@
 
 using namespace libcontainers;
 
+template<typename T>
 class HASH_TABLE : public::testing::Test {
-
     public:
-    int max_size = 10;
-    int total_size = 15;
     int test_numbers[15] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-    std::string test_strings[15] = {"a", "b", "c", "d", "e", "f", "g", "h", "i"};
+    std::string test_strings[15] = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p"};
 };
 
-TEST_F(HASH_TABLE, test_creation) {
+typedef testing::Types<
+                         hash_open<custom_hash_container>> hash_container_type;
 
-//    std::unique_ptr<hash_table<custom_hash_container>> test_chaining(
-//        new hash_chaining<custom_hash_container>);
+TYPED_TEST_CASE(HASH_TABLE, hash_container_type);
 
-    std::unique_ptr<hash_table<custom_hash_container>> test_open(
-        new hash_open<custom_hash_container>);
+TYPED_TEST(HASH_TABLE, test_creation) {
+
+    std::unique_ptr<hash_table<custom_hash_container>> test_hash_table(
+        new TypeParam);
 }
 
-TEST_F(HASH_TABLE, test_insertion_and_searching_not_exceeding) {
-
-    std::unique_ptr<hash_table<int>> test_open_int(new hash_open<int>);
-    EXPECT_EQ(*test_open_int->insert(test_numbers[0]), test_numbers[0]);
-    EXPECT_EQ(*test_open_int->insert(test_numbers[1]), test_numbers[1]);
-    EXPECT_EQ(*test_open_int->insert(test_numbers[11]), test_numbers[11]);
-
+TYPED_TEST(HASH_TABLE, test_insertion_and_searching_not_exceeding) {
     std::unique_ptr<hash_table<custom_hash_container>> test_open_custom(
-        new hash_open<custom_hash_container>);
+        new TypeParam);
 
-    custom_hash_container first_container{"test_data_one", test_strings[3], test_numbers[7]};
-    custom_hash_container second_container{"test_data_two", test_strings[1], test_numbers[1]};
-    custom_hash_container third_container{"test_data_three", test_strings[1], test_numbers[1]};
+    custom_hash_container first_container{"test_data_one", TestFixture::test_strings[3], TestFixture::test_numbers[7]};
+    custom_hash_container second_container{"test_data_two", TestFixture::test_strings[1], TestFixture::test_numbers[1]};
+    custom_hash_container third_container{"test_data_three", TestFixture::test_strings[1], TestFixture::test_numbers[1]};
+    custom_hash_container absent_container{"test_data_absent", TestFixture::test_strings[5], TestFixture::test_numbers[2]};
 
     EXPECT_EQ(test_open_custom->insert(first_container)->stored_data, first_container.stored_data);
 
@@ -49,10 +44,6 @@ TEST_F(HASH_TABLE, test_insertion_and_searching_not_exceeding) {
 
     test_open_custom->insert(third_container);
     EXPECT_EQ(inserted_data->stored_data, third_container.stored_data);
-
-    EXPECT_EQ(*test_open_int->search(hash_function<int>{}(test_numbers[0])), test_numbers[0]);
-    EXPECT_EQ(*test_open_int->search(hash_function<int>{}(test_numbers[1])), test_numbers[1]);
-    EXPECT_EQ(*test_open_int->search(hash_function<int>{}(test_numbers[11])), test_numbers[11]);
 
     EXPECT_EQ(test_open_custom->search(hash_function<custom_hash_container>{}(first_container))->stored_data
                 , first_container.stored_data);
@@ -65,33 +56,73 @@ TEST_F(HASH_TABLE, test_insertion_and_searching_not_exceeding) {
 
     EXPECT_EQ(test_open_custom->search(hash_function<custom_key>{}(second_container.key))->stored_data
                 , third_container.stored_data);
+
+    EXPECT_EQ(test_open_custom->search(hash_function<custom_hash_container>{}(absent_container))
+                , nullptr);
 }
 
-TEST_F(HASH_TABLE, test_insertion_and_searching_exceeding) {
+TYPED_TEST(HASH_TABLE, test_insertion_and_searching_exceeding) {
 
-    std::unique_ptr<hash_table<int>> test_open_int(new hash_open<int>(3));
-    EXPECT_EQ(*test_open_int->insert(test_numbers[0]), test_numbers[0]);
-    EXPECT_EQ(*test_open_int->insert(test_numbers[1]), test_numbers[1]);
-    EXPECT_EQ(*test_open_int->insert(test_numbers[2]), test_numbers[2]);
-    EXPECT_EQ(*test_open_int->insert(test_numbers[3]), test_numbers[3]);
+    std::unique_ptr<hash_table<custom_hash_container>> test_open_custom(new TypeParam);
 
-    EXPECT_EQ(*test_open_int->search(hash_function<int>{}(test_numbers[0])), test_numbers[0]);
-    EXPECT_EQ(*test_open_int->search(hash_function<int>{}(test_numbers[1])), test_numbers[1]);
-    EXPECT_EQ(*test_open_int->search(hash_function<int>{}(test_numbers[2])), test_numbers[2]);
-    EXPECT_EQ(*test_open_int->search(hash_function<int>{}(test_numbers[3])), test_numbers[3]);
+    custom_hash_container first_container{"test_data_one", TestFixture::test_strings[3], TestFixture::test_numbers[1]};
+    custom_hash_container second_container{"test_data_two", TestFixture::test_strings[2], TestFixture::test_numbers[2]};
+    custom_hash_container third_container{"test_data_three", TestFixture::test_strings[5], TestFixture::test_numbers[3]};
+    custom_hash_container fourth_container{"test_data_fourth", TestFixture::test_strings[5], TestFixture::test_numbers[7]};
+
+    EXPECT_EQ(test_open_custom->insert(first_container)->stored_data, first_container.stored_data);
+    EXPECT_EQ(test_open_custom->insert(second_container)->stored_data, second_container.stored_data);
+    EXPECT_EQ(test_open_custom->insert(third_container)->stored_data, third_container.stored_data);
+    EXPECT_EQ(test_open_custom->insert(fourth_container)->stored_data, fourth_container.stored_data);
+
+    EXPECT_EQ(test_open_custom->search(hash_function<custom_hash_container>{}(first_container))->stored_data
+                , first_container.stored_data);
+
+    EXPECT_EQ(test_open_custom->search(hash_function<custom_hash_container>{}(second_container))->stored_data
+                , second_container.stored_data);
+
+    EXPECT_EQ(test_open_custom->search(hash_function<custom_hash_container>{}(third_container))->stored_data
+                , third_container.stored_data);
+
+    EXPECT_EQ(test_open_custom->search(hash_function<custom_hash_container>{}(fourth_container))->stored_data
+                , fourth_container.stored_data);
+    
 }
 
-TEST_F(HASH_TABLE, test_removing) {
+TYPED_TEST(HASH_TABLE, test_removing) {
 
-    std::unique_ptr<hash_table<int>> test_open_int(new hash_open<int>);
+    std::unique_ptr<hash_table<custom_hash_container>> test_open_custom(new TypeParam);
+    custom_hash_container first_container{"test_data_one", TestFixture::test_strings[3], TestFixture::test_numbers[1]};
+    custom_hash_container second_container{"test_data_two", TestFixture::test_strings[2], TestFixture::test_numbers[2]};
+    custom_hash_container third_container{"test_data_three", TestFixture::test_strings[5], TestFixture::test_numbers[3]};
+    custom_hash_container fourth_container{"test_data_fourth", TestFixture::test_strings[5], TestFixture::test_numbers[7]};
 
-    for (int i = 0; i < 4; ++i) {
-        EXPECT_EQ(*test_open_int->insert(test_numbers[i]), test_numbers[i]);
-    }
+    EXPECT_EQ(test_open_custom->insert(first_container)->stored_data, first_container.stored_data);
+    EXPECT_EQ(test_open_custom->insert(second_container)->stored_data, second_container.stored_data);
+    EXPECT_EQ(test_open_custom->insert(third_container)->stored_data, third_container.stored_data);
+    EXPECT_EQ(test_open_custom->insert(fourth_container)->stored_data, fourth_container.stored_data);
 
-    for (int i = 0; i < 4; ++i) {
-        EXPECT_EQ(*test_open_int->search(hash_function<int>{}(test_numbers[i])), test_numbers[i]);
-        EXPECT_EQ(test_open_int->remove(test_numbers[i]), true);
-        EXPECT_EQ(test_open_int->search(hash_function<int>{}(test_numbers[i])), nullptr);
-    }
+    EXPECT_EQ(test_open_custom->search(hash_function<custom_hash_container>{}(first_container))->stored_data
+        , first_container.stored_data);
+    EXPECT_EQ(test_open_custom->remove(first_container), true);
+    EXPECT_EQ(test_open_custom->search(hash_function<custom_hash_container>{}(first_container))
+        , nullptr);
+
+    EXPECT_EQ(test_open_custom->search(hash_function<custom_hash_container>{}(second_container))->stored_data
+        , second_container.stored_data);
+    EXPECT_EQ(test_open_custom->remove(second_container), true);
+    EXPECT_EQ(test_open_custom->search(hash_function<custom_hash_container>{}(second_container))
+        , nullptr);
+
+    EXPECT_EQ(test_open_custom->search(hash_function<custom_hash_container>{}(third_container))->stored_data
+        , third_container.stored_data);
+    EXPECT_EQ(test_open_custom->remove(third_container), true);
+    EXPECT_EQ(test_open_custom->search(hash_function<custom_hash_container>{}(third_container))
+        , nullptr);
+
+    EXPECT_EQ(test_open_custom->search(hash_function<custom_hash_container>{}(fourth_container))->stored_data
+        , fourth_container.stored_data);
+    EXPECT_EQ(test_open_custom->remove(fourth_container), true);
+    EXPECT_EQ(test_open_custom->search(hash_function<custom_hash_container>{}(fourth_container))
+        , nullptr);
 }

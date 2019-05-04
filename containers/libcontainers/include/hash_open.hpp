@@ -38,7 +38,12 @@ namespace libcontainers {
                     }
                 }
 
-                ++normalised_hash_value;
+                if (normalised_hash_value != original_normalised_hash_value) {
+                    break;
+                }
+                else {
+                    ++normalised_hash_value;
+                }
             }
             while (normalised_hash_value != original_normalised_hash_value);
 
