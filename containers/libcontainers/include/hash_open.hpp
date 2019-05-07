@@ -1,6 +1,5 @@
 #pragma once
 #include "hash_table.hpp"
-#include "hash_function.hpp"
 
 namespace libcontainers {
     template <typename T> class hash_open : public hash_table<T>
@@ -38,7 +37,7 @@ namespace libcontainers {
                     }
                 }
 
-                if (normalised_hash_value != original_normalised_hash_value) {
+                if (normalised_hash_value == original_normalised_hash_value) {
                     break;
                 }
                 else {
@@ -54,7 +53,7 @@ namespace libcontainers {
         {
             T* ret = nullptr;
             
-            size_t hash_value = create_hash_value(data);
+            size_t hash_value = this->create_hash_value(data);
             size_t normalised_hash_value = normalise_hash_value(hash_value);
             size_t original_normalised_hash_value = normalised_hash_value;
             ret = attempt_to_insert(data, normalised_hash_value);
@@ -65,7 +64,7 @@ namespace libcontainers {
 
                 if (normalised_hash_value == original_normalised_hash_value) {
                     resize_and_reallocate();
-                    hash_value = create_hash_value(data);
+                    hash_value = this->create_hash_value(data);
                     normalised_hash_value = normalise_hash_value(hash_value);
                     original_normalised_hash_value = normalised_hash_value;
                 }
@@ -102,7 +101,12 @@ namespace libcontainers {
                     }
                 }
 
-                ++normalised_hash_value;
+                if (normalised_hash_value == original_normalised_hash_value) {
+                    break;
+                }
+                else {
+                    ++normalised_hash_value;
+                }
             }
             while (normalised_hash_value != original_normalised_hash_value);
 
@@ -163,21 +167,15 @@ namespace libcontainers {
             T* ret = nullptr;
 
             if (hash_array[normalised_hash_value] == nullptr) {
-                hash_array[normalised_hash_value] = new hash_node<T>{create_hash_value(data), data};
+                hash_array[normalised_hash_value] = new hash_node<T>{this->create_hash_value(data), data};
                 ret = &(hash_array[normalised_hash_value]->data);
             }
-            else if (create_hash_value(hash_array[normalised_hash_value]->data) == create_hash_value(data)) {
+            else if (this->create_hash_value(hash_array[normalised_hash_value]->data) == this->create_hash_value(data)) {
                 hash_array[normalised_hash_value]->data = data;
                 ret = &(hash_array[normalised_hash_value]->data);
             }
 
             return ret;
-        }
-
-        size_t create_hash_value(const T& data)
-        {
-            size_t hash_value = libcontainers::hash_function<T>{}(data);
-            return hash_value;
         }
 
         size_t normalise_hash_value(size_t hash_value)

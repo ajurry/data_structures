@@ -1,4 +1,5 @@
 #pragma once
+#include "hash_function.hpp"
 
 namespace libcontainers {
 
@@ -18,6 +19,13 @@ namespace libcontainers {
         virtual T* search(const size_t key) = 0;
         virtual T* insert(const T& data) = 0;
         virtual bool remove(const T& data) = 0;
+
+        protected:
+        size_t create_hash_value(const T& data)
+        {
+            size_t hash_value = libcontainers::hash_function<T>{}(data);
+            return hash_value;
+        }
     };
 
 };

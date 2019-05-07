@@ -17,8 +17,7 @@ class HASH_TABLE : public::testing::Test {
     std::string test_strings[15] = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "k", "l", "m", "n", "o", "p"};
 };
 
-typedef testing::Types<
-                         hash_open<custom_hash_container>> hash_container_type;
+typedef testing::Types<hash_open<custom_hash_container>, hash_chaining<custom_hash_container>> hash_container_type;
 
 TYPED_TEST_CASE(HASH_TABLE, hash_container_type);
 
