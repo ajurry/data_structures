@@ -10,6 +10,12 @@ namespace libcontainers {
 
         trie_node* children[alphabet_length];
 
+        trie_node() {
+            for (int i = 0; i < alphabet_length; ++i) {
+                children[i] = nullptr;
+            }
+        }
+
         ~trie_node() {
             int i = 0;
 
